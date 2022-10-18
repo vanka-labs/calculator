@@ -124,6 +124,7 @@ def set_precision(number, size):
         number = int_part + float_part
         number = number.normalize()
         number = number + Decimal('0')
+        getcontext().prec = 28
     return number
 
 
