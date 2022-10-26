@@ -99,31 +99,43 @@ def calculate(num1, num2, operation):
 
 
 def set_precision(number, size):
-    min_value = '1e-' + str(size + 1)
+    is_negative = False
+    if number < 0:
+        is_negative = True
+    min_value = '1e-' + str(size)
     min_value = Decimal(min_value)
     if number != Decimal(nan) and number != Decimal(inf):
         float_part = number % 1
+
         int_part = number - float_part
         int_size = len(str(int_part).split('.')[0])
         if int_part == 0:
-            int_size = 1
+            int_size = 0
         getcontext().prec = size
         setcontext(Context(prec=size))
-        float_part = float_part.normalize()
-        float_part = float_part + Decimal('0.0')
+        # float_part = float_part.normalize()
+        # float_part = float_part + Decimal('0.0')
         precision = size + int_size
+        if is_negative:
+            precision -= 1
         getcontext().prec = precision
         if abs(float_part) < min_value and float_part != 0:
             value = '1e-' + str(size)
             value = Decimal.normalize(Decimal(value))
             float_part = value
         if '.0' in str(float_part):
-            getcontext().prec = size - 1
+            nulls_count = 0
+            fl_part = str(float_part).split('.')[1]
+            i = 0
+            while fl_part[i] == '0':
+                nulls_count += 1
+                i += 1
+            getcontext().prec = size - nulls_count
             float_part = float_part + Decimal('0')
             getcontext().prec = precision
         number = int_part + float_part
         number = number.normalize()
-        number = number + Decimal('0')
+        # number = number + Decimal('0')
         getcontext().prec = 28
     return number
 
