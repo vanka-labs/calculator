@@ -122,20 +122,21 @@ def set_precision(number, size):
         if abs(float_part) < min_value and float_part != 0:
             value = '1e-' + str(size)
             value = Decimal.normalize(Decimal(value))
-            float_part = value
+            float_part = Decimal('0')
         if '.0' in str(float_part):
             nulls_count = 0
             fl_part = str(float_part).split('.')[1]
             i = 0
-            while fl_part[i] == '0':
+            while fl_part[i] == '0' and i < len(fl_part) - 1:
                 nulls_count += 1
                 i += 1
+
             getcontext().prec = size - nulls_count
             float_part = float_part + Decimal('0')
             getcontext().prec = precision
         number = int_part + float_part
         number = number.normalize()
-        # number = number + Decimal('0')
+        number = number + Decimal('0')
         getcontext().prec = 28
     return number
 
